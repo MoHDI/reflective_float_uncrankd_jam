@@ -1,6 +1,6 @@
-name=Template
-author=You
+name=Reflective Float
+author=MoHDI
 description=This is template project
-bundleID=com.organization.package
+bundleID=com.mohdi.reflective_float
 version=0.0.1
 buildNumber=1
