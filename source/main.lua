@@ -12,15 +12,32 @@ local gfx <const> = pd.graphics
 
 local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
 local head = gfx.image.new('images/full_head2.png')
+local screen_ui = gfx.image.new('images/screen.png')
 -- Create a sprite with the loaded image
 local spriteLeft = gfx.sprite.new(head)
 local spriteRight = gfx.sprite.new(head)
+local screenSprite = gfx.sprite.new(screen_ui)
 spriteLeft:moveTo(160, 120)  -- Set the initial position for sprite 1
 spriteRight:moveTo(240, 120)  -- Set the initial position for sprite 2
+screenSprite:moveTo(200, 120)  -- Set the initial position for sprite 2
+screenSprite:add()
 spriteLeft:add()  -- Add spriteLeft to the drawing system
 spriteRight:add()  -- Add spriteRight to the drawing system
+-- Flip spriteRight horizontally to make it mirrored-- Create the central sprite
+local screenWidth, screenHeight = playdate.display.getSize()
+local centralSprite = gfx.sprite.new()
 
--- Flip spriteRight horizontally to make it mirrored
+-- Build one container for the whole caracter 
+centralSprite:setSize(screenWidth / 2, screenHeight)  -- Half the screen width, full height
+centralSprite:moveTo(screenWidth / 2, screenHeight / 2)  -- Center it
+
+-- centralSprite:setBackgroundColor(gfx.kColorBlack)  -- Set a background color
+-- centralSprite:setColor(gfx.kColorBlack)  -- Set a color
+-- gfx.setColor(gfx.kColorBlack)
+-- centralSprite.graphics.fillRect(50, 50, 100, 100)
+-- centralSprite.setBackgroundColor(gfx.kColorBlack)  -- Set a background color
+
+centralSprite:add()
 spriteRight:setScale(-1, 1)
 
 local function loadGame()
@@ -68,4 +85,5 @@ function playdate.update()
     -- Update the display
     gfx.sprite.update()
     playdate.timer.updateTimers()
+	
 end
