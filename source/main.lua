@@ -26,7 +26,7 @@ local activeIndex = 1  -- Start with the first item as active
 local myCharacter = Character.new()
 myCharacter:selectPart("Torso")
 myCharacter:movePart(5, 0)
-myCharacter:rotatePart(10)
+-- myCharacter:rotatePart(10)
 myCharacter:resetPart()
 
 -- local mirrorCharacter = Character.new()
@@ -46,7 +46,10 @@ local heroSprite2 = Hero(200,120)
 heroSprite:setZIndex(23)
 heroSprite2:setZIndex(23)
 heroSprite2:setScale(-1,1)
-
+heroSprite:setClipRect(0, 0, 200, 240)
+heroSprite2:setClipRect(200, 0, 200, 240)
+heroSprite:setCenter(.5, 0.5)
+heroSprite2:setCenter(0, 0.5)
 heroSprite:add()
 heroSprite2:add()
 
@@ -89,18 +92,23 @@ function pd.update()
     
         -- myCharacter:movePart(0, -2)
         heroSprite:movePart(0,-2)
+        heroSprite2:movePart(0,-2)
         -- mirrorCharacter:movePart(0, -2)
     elseif playdate.buttonIsPressed(playdate.kButtonDown) then
         -- myCharacter:movePart(0, 2)
         heroSprite:movePart(0,2)
+        heroSprite2:movePart(0,2)
         -- mirrorCharacter:movePart(0, 2)
     end
     if playdate.buttonIsPressed(playdate.kButtonLeft) then
         -- myCharacter:movePart(-2, 0)
         heroSprite:movePart(-2, 0)
+        heroSprite2:movePart(2, 0)
         -- mirrorCharacter:movePart(2, 0)
     elseif playdate.buttonIsPressed(playdate.kButtonRight) then
         heroSprite:movePart(2, 0)
+        heroSprite2:movePart(-2, 0)
+
         -- myCharacter:movePart(2, 0)
         -- mirrorCharacter:movePart(-2, 0)
     end
@@ -135,8 +143,12 @@ function pd.update()
     gfx.sprite.update()
     -- myCharacter:update()
     -- mirrorCharacter:update()
+
         heroSprite:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
         heroSprite:update()
+
+        heroSprite2:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
+        heroSprite2:update()
         -- gfx.sprite.updateAll()
     
     playdate.timer.updateTimers()

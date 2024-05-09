@@ -12,6 +12,7 @@ function Hero:init(x, y)
     
     -- Load images
     self.baseImage = gfx.image.new(200, 240)
+    -- self.baseImage = gfx.image.new(200, 240, gfx.kImageFormatGrayscale)
     gfx.setClipRect(0, 0, 200, 240)
     assert(self.baseImage, "Failed to create base image")
 
@@ -35,13 +36,14 @@ end
 
 function Hero:update()
     gfx.pushContext(self.baseImage)  -- Draw onto the base image
-    gfx.clear()  -- Clear previous drawings
+    gfx.clear(gfx.kColorClear)  -- Clear with transparent color
 
     -- Optionally draw static parts here (could add other parts like body, arms, etc.)
 
     -- Rotate and draw the head
     local headCenterX, headCenterY = 100, 120  -- Center for the head
     gfx.pushContext()  -- Save current drawing context
+    
     -- gfx.translate(headCenterX, headCenterY)  -- Move context to where the head should be centered
     -- gfx.rotate(math.rad(self.headRotation))  -- Apply rotation in radians
     -- self.head:draw(-self.head:getWidth() / 2, -self.head:getHeight() / 2)  -- Draw head centered on its rotation point
