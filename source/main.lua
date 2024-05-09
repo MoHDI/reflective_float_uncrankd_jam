@@ -6,6 +6,7 @@ import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
 import 'Character'
+import 'hero'
 
 -- Load the Character class
 -- import "dvd" -- DEMO
@@ -39,6 +40,15 @@ local bg = gfx.image.new('images/bg.png')
 local ui = gfx.image.new('images/ui.png')
 local bgSprite = gfx.sprite.new(bg)
 local uiSprite = gfx.sprite.new(ui)
+
+local heroSprite = Hero(100,120)
+local heroSprite2 = Hero(200,120)
+heroSprite:setZIndex(23)
+heroSprite2:setZIndex(23)
+heroSprite2:setScale(-1,1)
+
+heroSprite:add()
+heroSprite2:add()
 
 function drawToOffscreenImage()
     gfx.pushContext(offscreenImage) -- Set the offscreen image as the current drawing target
@@ -77,18 +87,21 @@ function pd.update()
     -- Check for D-pad inputs and adjust position
     if playdate.buttonIsPressed(playdate.kButtonUp) then
     
-        myCharacter:movePart(0, -2)
+        -- myCharacter:movePart(0, -2)
+        heroSprite:movePart(0,-2)
         -- mirrorCharacter:movePart(0, -2)
     elseif playdate.buttonIsPressed(playdate.kButtonDown) then
-        myCharacter:movePart(0, 2)
+        -- myCharacter:movePart(0, 2)
+        heroSprite:movePart(0,2)
         -- mirrorCharacter:movePart(0, 2)
     end
     if playdate.buttonIsPressed(playdate.kButtonLeft) then
-        myCharacter:movePart(-2, 0)
+        -- myCharacter:movePart(-2, 0)
+        heroSprite:movePart(-2, 0)
         -- mirrorCharacter:movePart(2, 0)
     elseif playdate.buttonIsPressed(playdate.kButtonRight) then
-
-        myCharacter:movePart(2, 0)
+        heroSprite:movePart(2, 0)
+        -- myCharacter:movePart(2, 0)
         -- mirrorCharacter:movePart(-2, 0)
     end
 
@@ -121,7 +134,11 @@ function pd.update()
     -- Update the display
     gfx.sprite.update()
     -- myCharacter:update()
-
+    -- mirrorCharacter:update()
+        heroSprite:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
+        heroSprite:update()
+        -- gfx.sprite.updateAll()
+    
     playdate.timer.updateTimers()
 	
 end

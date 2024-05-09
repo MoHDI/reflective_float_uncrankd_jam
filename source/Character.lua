@@ -3,7 +3,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/ui"
 
 local gfx <const> = playdate.graphics
--- change to extend sprite
+-- change to extend spritec
 -- Character class definition
 Character = {}
 Character.__index = Character
