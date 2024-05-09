@@ -23,6 +23,8 @@ end
 
 local pieces = {"Head", "Torso", "Arms", "Legs"}
 local activeIndex = 1  -- Start with the first item as active
+local heroParts = {"head", "torso", "leftArm", "rightArm", "leftLeg", "rightLeg"}
+local activeHeroIndex = 1
 local myCharacter = Character.new()
 myCharacter:selectPart("Torso")
 myCharacter:movePart(5, 0)
@@ -122,6 +124,11 @@ function pd.update()
 	-- local currentAngle2 = mirrorCharacter:getPartRotation()
 	-- spriteLeft:setRotation(currentAngle + crankChange)
 	-- spriteRight:setRotation(currentAngle2 - crankChange)
+    -- heroSprite:drawRotatedPart("head")
+    
+    heroSprite:rotatePart(currentAngle+crankChange)
+    heroSprite2:rotatePart(currentAngle-crankChange)
+
     myCharacter:rotatePartFree(currentAngle+crankChange)
     -- mirrorCharacter:rotatePartFree(currentAngle2-crankChange)
 	if playdate.buttonJustPressed(pd.kButtonA) then
@@ -136,7 +143,13 @@ function pd.update()
         if activeIndex > #pieces then
             activeIndex = 1
         end
-      
+        activeHeroIndex = activeHeroIndex + 1
+        if activeHeroIndex > #heroParts then
+            activeHeroIndex = 1
+        end
+        heroSprite:selectPart(heroParts[activeHeroIndex])
+        heroSprite2:selectPart(heroParts[activeHeroIndex])
+
         myCharacter:selectPart(pieces[activeIndex])
 	end
     -- Update the display
@@ -144,11 +157,12 @@ function pd.update()
     -- myCharacter:update()
     -- mirrorCharacter:update()
 
-        heroSprite:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
+        -- heroSprite:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
         heroSprite:update()
-
-        heroSprite2:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
         heroSprite2:update()
+
+        -- heroSprite2:rotateHead(pd.getCrankChange())  -- Rotate head based on crank input or any other input method
+        -- heroSprite2:update()
         -- gfx.sprite.updateAll()
     
     playdate.timer.updateTimers()
