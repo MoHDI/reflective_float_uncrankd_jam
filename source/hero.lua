@@ -18,11 +18,11 @@ function Hero:init(x, y)
     self.parts = {
         head = {image = gfx.image.new('images/body/head_tall.png'), rotation = 0, centerX = 100, centerY = 66},
         -- head = {image = gfx.image.new('images/body/head.png'), rotation = 0, centerX = 71, centerY = 1, wide = 60, tall=66},
-        torso = {image = gfx.image.new('images/body/torso.png'), rotation = 0, centerX = 77, centerY = 58},
-        leftArm = {image = gfx.image.new('images/body/arm.png'), rotation = 0, centerX = 0, centerY = 57},
-        rightArm = {image = gfx.image.new('images/body/arm_r.png'), rotation =0, centerX = 84, centerY = 57},
-        leftLeg = {image = gfx.image.new('images/body/leg.png'), rotation = 0, centerX = 52, centerY = 99},
-        rightLeg = {image = gfx.image.new('images/body/leg_r.png'), rotation = 0, centerX = 94, centerY = 99},
+        torso = {image = gfx.image.new('images/body/torso_tall.png'), rotation = 0, centerX =100, centerY = 109},
+        leftArm = {image = gfx.image.new('images/body/arms1.png'), rotation = 0, centerX = 91, centerY = 71},
+        rightArm = {image = gfx.image.new('images/body/arms2.png'), rotation =0, centerX = 108, centerY = 71},
+        leftLeg = {image = gfx.image.new('images/body/legs1.png'), rotation = 0, centerX = 91, centerY = 114},
+        rightLeg = {image = gfx.image.new('images/body/legs2.png'), rotation = 0, centerX = 107, centerY = 114},
     }
 
     self:moveTo(x, y)
@@ -51,7 +51,11 @@ function Hero:rotatePart(angle)
         -- partName.image:drawRotated(100,66, partName.rotation)
     end
 end
-
+-- self.currentPart = self.parts.head
+function Hero:getPartRotation()
+    local current = self.currentPart
+    return current.rotation
+end
 function Hero:update()
     gfx.pushContext(self.baseImage)
     gfx.clear(gfx.kColorClear)  -- Clear with transparent color

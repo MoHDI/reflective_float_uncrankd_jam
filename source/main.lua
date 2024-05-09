@@ -24,12 +24,13 @@ end
 local pieces = {"Head", "Torso", "Arms", "Legs"}
 local activeIndex = 1  -- Start with the first item as active
 local heroParts = {"head", "torso", "leftArm", "rightArm", "leftLeg", "rightLeg"}
+
 local activeHeroIndex = 1
-local myCharacter = Character.new()
-myCharacter:selectPart("Torso")
-myCharacter:movePart(5, 0)
--- myCharacter:rotatePart(10)
-myCharacter:resetPart()
+-- local myCharacter = Character.new()
+-- myCharacter:selectPart("Torso")
+-- myCharacter:movePart(5, 0)
+-- -- myCharacter:rotatePart(10)
+-- myCharacter:resetPart()
 
 -- local mirrorCharacter = Character.new()
 -- mirrorCharacter:selectPart("Head")
@@ -45,15 +46,19 @@ local uiSprite = gfx.sprite.new(ui)
 
 local heroSprite = Hero(100,120)
 local heroSprite2 = Hero(200,120)
+
 heroSprite:setZIndex(23)
 heroSprite2:setZIndex(23)
 heroSprite2:setScale(-1,1)
-heroSprite:setClipRect(0, 0, 200, 240)
-heroSprite2:setClipRect(200, 0, 200, 240)
+heroSprite:setClipRect(-200, 0, 400, 240)
+heroSprite2:setClipRect(200, 0, 400, 240)
 heroSprite:setCenter(.5, 0.5)
 heroSprite2:setCenter(0, 0.5)
 heroSprite:add()
 heroSprite2:add()
+
+heroSprite:selectPart(heroParts[activeHeroIndex])
+heroSprite2:selectPart(heroParts[activeHeroIndex])
 
 function drawToOffscreenImage()
     gfx.pushContext(offscreenImage) -- Set the offscreen image as the current drawing target
@@ -86,7 +91,7 @@ function pd.update()
     -- drawToOffscreenImage() -- Update the offscreen image
     -- gfx.sprite.updateAll() -- Update and draw all sprites
     -- Get the current position
-    local x1, y1 = myCharacter:getPosition()
+    -- local x1, y1 = myCharacter:getPosition()
     -- local x2, y2 = spriteRight:getPosition()
     -- print(x1, y1)
     -- Check for D-pad inputs and adjust position
@@ -120,7 +125,8 @@ function pd.update()
     lastCrankPosition = currentCrankPosition  -- Update the last position for the next frame
 
     -- Rotate the sprite based on crank movement
-    local currentAngle = myCharacter:getPartRotation()
+    -- local currentAngle = myCharacter:getPartRotation()
+        local currentAngle = heroSprite:getPartRotation()
 	-- local currentAngle2 = mirrorCharacter:getPartRotation()
 	-- spriteLeft:setRotation(currentAngle + crankChange)
 	-- spriteRight:setRotation(currentAngle2 - crankChange)
@@ -129,7 +135,7 @@ function pd.update()
     heroSprite:rotatePart(currentAngle+crankChange)
     heroSprite2:rotatePart(currentAngle-crankChange)
 
-    myCharacter:rotatePartFree(currentAngle+crankChange)
+    -- myCharacter:rotatePartFree(currentAngle+crankChange)
     -- mirrorCharacter:rotatePartFree(currentAngle2-crankChange)
 	if playdate.buttonJustPressed(pd.kButtonA) then
 		-- spriteLeft:setRotation(0)
@@ -150,7 +156,7 @@ function pd.update()
         heroSprite:selectPart(heroParts[activeHeroIndex])
         heroSprite2:selectPart(heroParts[activeHeroIndex])
 
-        myCharacter:selectPart(pieces[activeIndex])
+        -- myCharacter:selectPart(pieces[activeIndex])
 	end
     -- Update the display
     gfx.sprite.update()
