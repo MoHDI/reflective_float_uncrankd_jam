@@ -1,6 +1,7 @@
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/ui"
+import "AnimatedSprite"
 
 local gfx <const> = playdate.graphics
 
@@ -25,7 +26,60 @@ end
 
 function Character.new()
     local self = setmetatable({}, Character)
-    
+    -- Loading imagetable from the disk
+imagetable = gfx.imagetable.new('images/sheets/head-scar')
+imagetableFlip = gfx.imagetable.new('images/sheets/head-scar-flip')
+
+-- Creating an AnimatedSprite instance
+headsprite = AnimatedSprite.new(imagetable )
+-- Adding custom a animation state (Optional)
+headsprite:addState('idle',1,12,{ tickStep = 10 })
+headsprite:addState('highlighted',13,24,{ tickStep = 10 })
+-- -- Playing the animation
+headsprite:moveTo(200, 120)
+headsprite:setZIndex(23)
+headsprite:playAnimation()
+
+local spriteImage = playdate.graphics.image.new("images/body/head.png")
+local spriteH = playdate.graphics.sprite.new(spriteImage)
+spriteH:moveTo(100, 100) -- Adjust position as necessary
+spriteH:add()
+
+local maskImage = gfx.image.new(200, 240)
+gfx.pushContext(maskImage)
+gfx.setColor(gfx.kColorBlack)
+gfx.fillRect(0, 0,200, 240) -- Fill left half with black (visible part)
+gfx.popContext()
+
+local spriteM = playdate.graphics.sprite.new(maskImage)
+spriteM:moveTo(100, 120) -- Adjust position as necessary
+spriteM:setZIndex(15)
+-- spriteM:add()
+
+
+-- spriteH:setMaskImage(maskImage)
+
+
+mheadsprite = AnimatedSprite.new(imagetableFlip)
+-- Adding custom a animation state (Optional)
+mheadsprite:addState('idle',1,12,{ tickStep = 10 })
+mheadsprite:addState('highlighted',13,24,{ tickStep = 10 })
+mheadsprite:setScale(-2, 1)
+
+-- -- Playing the animation
+mheadsprite:moveTo(200, 120)
+mheadsprite:setZIndex(24)
+mheadsprite:playAnimation()
+-- local width, height = headsprite:getSize()
+-- local flippedHead = gfx.image.new(width, height)
+
+-- gfx.pushContext(flippedHead)
+-- gfx.setImageDrawMode(playdate.graphics.kDrawModeCopy)
+-- gfx:draw(-width, 0, width, height)
+-- gfx.popContext()
+
+-- mHeadSprite:setImage(flippedHead)
+-- -- mHeadSprite:add()
     -- Initialize character parts with their respective images
     self.parts = {
         Head = {image = "images/body/head.png", rotateLimit = 45, moveLimit = {x = 10, y = 10}},
@@ -54,6 +108,7 @@ function Character.new()
 
         if partName == "Head" then
             part.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
+            headsprite:setCenter(0.5, 0.939)
             part.sprite:setZIndex(4)
          elseif partName == "Legs" then
             part.sprite:setZIndex(2)
@@ -72,7 +127,7 @@ function Character.new()
 
         part.sprite:moveTo(200, 120)  -- Initial position, adjust as necessary
         -- part.sprite:setZIndex(1)
-        part.sprite:add()
+        -- part.sprite:add()
     end
     for mirrorPartName, mpart in pairs(self.mirrorparts) do
         local img = gfx.image.new(mpart.image)
@@ -119,6 +174,7 @@ end
 
 -- Move the current active selected part within limits
 function Character:movePart(x, y)
+   
     -- local current = self.currentPart
     local current = self.parts.Torso
     local torso = self.parts.Torso
@@ -128,6 +184,8 @@ current.sprite:moveTo(
     math.max(math.min(current.sprite.x + x, current.sprite.x + current.moveLimit.x), current.sprite.x - current.moveLimit.x),
     math.max(math.min(current.sprite.y + y, current.sprite.y + current.moveLimit.y), current.sprite.y - current.moveLimit.y)
 )
+
+    headsprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-20, torso.sprite.x, torso.sprite.y, newAngle))
     self.parts.Head.sprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-20, torso.sprite.x, torso.sprite.y, newAngle))
     self.parts.Arms.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
     self.parts.Legs.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y+20, torso.sprite.x, torso.sprite.y, newAngle))
@@ -144,20 +202,26 @@ function Character:rotatePartFree(angle)
     local newAngle =  angle
     if current == self.parts.Torso then 
         -- self.parts.Head.sprite:moveTo(getRotatedPosition(self.parts.Head.sprite.x, self.parts.Head.sprite.y, current.sprite.x, current.sprite.y, newAngle))
-        self.parts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
+        -- self.parts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
+        headsprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
+  
         self.parts.Arms.sprite:moveTo(getRotatedPosition(current.sprite.x-15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
         self.parts.Legs.sprite:moveTo(getRotatedPosition(current.sprite.x-15, current.sprite.y+20, current.sprite.x, current.sprite.y, newAngle))
 
         -- self.mirrorparts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
         self.mirrorparts.Arms.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
         self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y+20, current.sprite.x, current.sprite.y, newAngle))
-        
+        headsprite:changeState('idle')
     end
 
     if(current == self.parts.Head) then
+        headsprite:changeState('highlighted')
+        --  headsprite:forceNextAnimation(true, 'idle') -- Used to change state to the next animation (from current state's nextAnimation param) or to the specified state now or in the end of the current animation loop.
+        headsprite:setRotation(newAngle)
         -- self.mirrorparts.Head.sprite:setRotation(-newAngle)
     end
     if(current == self.parts.Arms) then
+
         self.mirrorparts.Arms.sprite:setRotation(-newAngle)
     end
     if(current == self.parts.Legs) then
@@ -167,6 +231,7 @@ function Character:rotatePartFree(angle)
     current.sprite:setRotation(newAngle)
 
 end
+
 function Character:getPartRotation()
     local current = self.currentPart
     return current.sprite:getRotation()
@@ -181,4 +246,6 @@ function Character:resetPart()
     current.sprite:setRotation(0)
     current.sprite:moveTo(200, 120)  -- Reset to some default position, modify as needed
 end
-
+function Character:update()
+    gfx.sprite.update()
+end

@@ -106,7 +106,7 @@ function pd.update()
 	if playdate.buttonJustPressed(pd.kButtonA) then
 		-- spriteLeft:setRotation(0)
 		-- spriteRight:setRotation(0)
-        gfx.sprite.update()
+        -- gfx.sprite.update()
 
 	end
 	if playdate.buttonJustPressed(pd.kButtonB) then
@@ -119,9 +119,21 @@ function pd.update()
         myCharacter:selectPart(pieces[activeIndex])
 	end
     -- Update the display
+    -- gfx.setClipRect(0, 0, 200, 240)
+    -- -- gfx.sprite.update()
+    -- myCharacter:update()
+    -- -- Clear the clipping rectangle so it doesn't affect other drawing operations
+    -- gfx.clearClipRect()
+    
+    -- gfx.setClipRect(200, 0, 200, 240)
     gfx.sprite.update()
+    -- Clear the clipping rectangle so it doesn't affect other drawing operations
+    -- gfx.clearClipRect()
+    -- bgSprite:add()
+    -- Update all sprites
+    -- playdate.graphics.sprite.update()
     -- myCharacter:update()
 
-    playdate.timer.updateTimers()
+    -- playdate.timer.updateTimers()
 	
 end
