@@ -6,7 +6,10 @@ local pd <const> = playdate
 local gfx <const> = pd.graphics
 
 class('Hero').extends(gfx.sprite)
-
+-- NOTES NOTES NOTES NO-NOOOOTES  
+-- OK so while I like the idea of having one class that extends the sprite to give some more controls over the character, I found that
+-- it ran super slow, the draw rotated function was intense and this path while fun, isn't going to work
+-- I'm going to go back to the other character class and see if I can have it work a bit better with the rotation movement, mirroring and control of parts
 function Hero:init(x, y)
     Hero.super.init(self)
     
