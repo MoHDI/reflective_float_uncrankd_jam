@@ -25,7 +25,7 @@ local activeIndex = 1  -- Start with the first item as active
 local myCharacter = Character.new()
 myCharacter:selectPart("Torso")
 myCharacter:movePart(5, 0)
-myCharacter:rotatePart(10)
+-- myCharacter:rotatePart(10)
 myCharacter:resetPart()
 
 -- local mirrorCharacter = Character.new()

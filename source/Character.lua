@@ -119,48 +119,28 @@ end
 
 -- Move the current active selected part within limits
 function Character:movePart(x, y)
-    local current = self.currentPart
-    print(current)
-   
-    if current == self.parts.Torso then
-        -- self.parts.Head.sprite:moveTo(current.sprite.x + x, current.sprite.y-20 + y)
-    end
-    current.sprite:moveTo(
-        math.max(math.min(current.sprite.x + x, current.sprite.x + current.moveLimit.x), current.sprite.x - current.moveLimit.x),
-        math.max(math.min(current.sprite.y + y, current.sprite.y + current.moveLimit.y), current.sprite.y - current.moveLimit.y)
-    )
-    if current == self.parts.Head then
-        -- self.mirrorparts.Head.sprite:moveTo(self.mirrorparts.Head.sprite.x - x,   self.mirrorparts.Head.sprite.y + y   )
-    end
-    if current == self.parts.Arms then
-        self.mirrorparts.Arms.sprite:moveTo(self.mirrorparts.Arms.sprite.x - x,   self.mirrorparts.Arms.sprite.y + y   )
-    end
-    if current == self.parts.Legs then
-        self.mirrorparts.Legs.sprite:moveTo(self.mirrorparts.Legs.sprite.x - x,   self.mirrorparts.Legs.sprite.y + y   )
-    end
-end
-
--- Rotate the current selected part within limits
-function Character:rotatePart(angle)
-    -- NOT USED FOR NOW
     -- local current = self.currentPart
-
+    local current = self.parts.Torso
+    local torso = self.parts.Torso
     -- print(current)
+    local newAngle =  torso.sprite:getRotation()
+current.sprite:moveTo(
+    math.max(math.min(current.sprite.x + x, current.sprite.x + current.moveLimit.x), current.sprite.x - current.moveLimit.x),
+    math.max(math.min(current.sprite.y + y, current.sprite.y + current.moveLimit.y), current.sprite.y - current.moveLimit.y)
+)
+    self.parts.Head.sprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-20, torso.sprite.x, torso.sprite.y, newAngle))
+    self.parts.Arms.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
+    self.parts.Legs.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y+20, torso.sprite.x, torso.sprite.y, newAngle))
 
-    -- local newAngle = current.sprite:getRotation() + angle
-    -- if current == self.parts.Torso then
-    --     print("Torso rotation")
-    --     self.parts.Head.sprite:moveTo(self.getRotatedPosition(self.parts.Head.sprite.x, self.parts.Head.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
-    --     -- self.mirrorparts.Head.sprite:moveTo(self.getRotatedPosition(self.mirrorparts.Head.sprite.x, self.mirrorparts.Head.sprite.y-20, current.sprite.x, current.sprite.y, -newAngle))
-    -- end
-    -- newAngle = math.max(math.min(newAngle, current.rotateLimit), -current.rotateLimit)
-
-    -- current.sprite:setRotation(newAngle)
+   self.mirrorparts.Arms.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
+    self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y+20, torso.sprite.x, torso.sprite.y, newAngle))
+    torso.sprite:setRotation(newAngle) 
 
 end
+
 function Character:rotatePartFree(angle)
     local current = self.currentPart
-    
+    local torso = self.parts.Torso
     local newAngle =  angle
     if current == self.parts.Torso then 
         -- self.parts.Head.sprite:moveTo(getRotatedPosition(self.parts.Head.sprite.x, self.parts.Head.sprite.y, current.sprite.x, current.sprite.y, newAngle))
@@ -174,7 +154,6 @@ function Character:rotatePartFree(angle)
         
     end
 
-    -- newAngle = math.max(math.min(newAngle, current.rotateLimit), -current.rotateLimit)
     if(current == self.parts.Head) then
         -- self.mirrorparts.Head.sprite:setRotation(-newAngle)
     end
@@ -203,15 +182,3 @@ function Character:resetPart()
     current.sprite:moveTo(200, 120)  -- Reset to some default position, modify as needed
 end
 
--- function Character:update()
---     -- gfx.setClipRect(self.clipRect.x, self.clipRect.y, self.clipRect.width, self.clipRect.height)
---     gfx.sprite.update()
---     -- Clear the clip rect to not affect other drawing operations
---     -- gfx.clearClipRect()
--- end
--- -- Example usage
--- local myCharacter = Character.new()
--- myCharacter:selectPart("Head")
--- myCharacter:movePart(5, 0)
--- myCharacter:rotatePart(10)
--- myCharacter:resetPart()
