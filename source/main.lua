@@ -33,12 +33,21 @@ myCharacter:selectPart("Torso")
 -- mirrorCharacter:movePart(5, 0)
 -- mirrorCharacter:rotatePart(-10)
 -- mirrorCharacter:resetPart()
+imagetable = gfx.imagetable.new('images/sheets/ui-sheet')
 
 local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
-local bg = gfx.image.new('images/bg.png')
+local bg = gfx.image.new('images/bg2.png')
 local ui = gfx.image.new('images/ui.png')
 local bgSprite = gfx.sprite.new(bg)
-local uiSprite = gfx.sprite.new(ui)
+-- local uiSprite = gfx.sprite.new(ui)
+local uiSprite = AnimatedSprite.new(imagetable)
+uiSprite:addState('idle', 1, 1, { tickStep = 15 })
+uiSprite:changeState('idle')
+-- uiSprite:playAnimation()
+-- Creating an AnimatedSprite instance
+-- headsprite = AnimatedSprite.new(imagetable)
+-- Adding custom a animation state (Optional)
+-- headsprite:addState('idle', 1, 12, { tickStep = 10 })
 
 function drawToOffscreenImage()
     gfx.pushContext(offscreenImage) -- Set the offscreen image as the current drawing target
@@ -58,7 +67,7 @@ uiSprite:moveTo(screenWidth / 2, screenHeight / 2)
 bgSprite:setZIndex(0)
 uiSprite:setZIndex(4)
 bgSprite:add()
-uiSprite:add()
+uiSprite:playAnimation()
 
 
 local function loadGame()
@@ -107,7 +116,8 @@ function pd.update()
 	if playdate.buttonJustPressed(pd.kButtonA) then
 		-- spriteLeft:setRotation(0)
 		-- spriteRight:setRotation(0)
-        gfx.sprite.update()
+        -- gfx.sprite.update()
+        
 
 	end
 	if playdate.buttonJustPressed(pd.kButtonB) then

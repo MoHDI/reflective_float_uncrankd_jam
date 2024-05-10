@@ -27,8 +27,8 @@ end
 function Character.new()
     local self = setmetatable({}, Character)
     -- Loading imagetable from the disk
-    imagetable = gfx.imagetable.new('images/sheets/head-scar')
-    imagetableFlip = gfx.imagetable.new('images/sheets/head-scar-flip')
+    imagetable = gfx.imagetable.new('images/sheets/head')
+    imagetableFlip = gfx.imagetable.new('images/sheets/head-flipped')
 
     -- Creating an AnimatedSprite instance
     headsprite = AnimatedSprite.new(imagetable)
@@ -86,16 +86,16 @@ function Character.new()
     self.parts = {
         Head = { image = "images/body/head.png", rotateLimit = 45, center = { x = 200, y = 0 }, moveLimit = { x = 10, y = 10 } },
         Torso = { image = "images/body/torso_tall_flipped.png", center = { x = 200, y = 110 }, rotateLimit = 30, moveLimit = { x = 100, y = 109 } },
-        ArmsL = { image = "images/body/arms1.png", center = { x = 191, y = 450 }, offSet = { w = -9, h = -39 }, rotateLimit = 90, moveLimit = { x = 115, y = 12 } },
-        ArmsR = {image = "images/body/arms2.png",center={x=191,y=450},  offSet = { w = 9, h = -39 },  rotateLimit = 90, moveLimit = {x = 15, y = 12}},
+        ArmsL = { image = "images/body/armst1.png", center = { x = 191, y = 450 }, offSet = { w = -9, h = -39 }, rotateLimit = 90, moveLimit = { x = 115, y = 12 } },
+        ArmsR = {image = "images/body/armst2.png",center={x=191,y=450},  offSet = { w = 9, h = -39 },  rotateLimit = 90, moveLimit = {x = 15, y = 12}},
         LegsL = { image = "images/body/legs1.png", center = { x = 0, y = 0 }, offSet = { w =-6, h = 10 }, rotateLimit = 60, moveLimit = { x = 10, y = 20 } },
         LegsR = { image = "images/body/legs2.png", center = { x = 0, y = 0 }, offSet = { w = 6, h = 10 }, rotateLimit = 60, moveLimit = { x = 10, y = 20 } }
     }
     self.mirrorparts = {
         -- Head = {image = "images/body/head.png", rotateLimit = 45, moveLimit = {x = 10, y = 10}},
         Torso = { image = "images/body/torso_tall.png", center = { x = 200, y = 109 }, rotateLimit = 30, moveLimit = { x = 5, y = 5 } },
-        ArmsL = { image = "images/body/arms2.png", center = { x = 191, y = 450 }, offSet = { w = 9, h = -39 }, rotateLimit = 90, moveLimit = { x = 115, y = 12 } },
-        ArmsR = {image = "images/body/arms1.png",center={x=191,y=450}, offSet = { w = -9, h = -39 }, rotateLimit = 90, moveLimit = {x = 15, y = 12}},
+        ArmsL = { image = "images/body/armst2.png", center = { x = 191, y = 450 }, offSet = { w = 9, h = -39 }, rotateLimit = 90, moveLimit = { x = 115, y = 12 } },
+        ArmsR = {image = "images/body/armst1.png",center={x=191,y=450}, offSet = { w = -9, h = -39 }, rotateLimit = 90, moveLimit = {x = 15, y = 12}},
         LegsL = { image = "images/body/legs2.png", center = { x = 0, y = 0 }, offSet = { w = 6, h = 10 }, rotateLimit = 60, moveLimit = { x = 10, y = 20 } },
         LegsR= { image = "images/body/legs1.png", center = { x = 0, y = 0 }, offSet = { w = -6, h = 10 }, rotateLimit = 60, moveLimit = { x = 10, y = 20 } }
     }
@@ -126,19 +126,19 @@ function Character.new()
             part.sprite:setCenter(0.5, 0.5)
             -- part.sprite:setCenter(0.54, 0.1)
         elseif partName == "LegsR" then
-            part.sprite:setZIndex(2)
+            part.sprite:setZIndex(3)
             part.sprite:setCenter(0.5, 0.5)
             -- part.sprite:setCenter(0.54, 0.1)
         elseif partName == "ArmsL" then
-            part.sprite:setZIndex(22)
+            part.sprite:setZIndex(8)
             -- part.sprite:setCenter(0.5, 0.5)
         elseif partName == "ArmsR" then
-            part.sprite:setZIndex(5)
+            part.sprite:setZIndex(9)
 
             part.sprite:setCenter(0.5, 0.5)
         elseif partName == "Torso" then
             -- part.sprite:setCenter(0.5, 0.5)
-            part.sprite:setZIndex(3)
+            part.sprite:setZIndex(10)
             part.sprite:moveTo(200, 120)
             -- part.sprite:add()
         else
@@ -163,27 +163,34 @@ function Character.new()
 
         if mirrorPartName == "Head" then
             --    mpart.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
-        elseif mirrorPartName == "Legs" then
+        elseif mirrorPartName == "LegsL" then
             -- mpart.sprite:setCenter(0.54, 0.1)
             -- mpart.sprite.flipX = true
+            mpart.sprite:setZIndex(4)
+        elseif mirrorPartName == "LegsR" then
+            -- mpart.sprite:setCenter(0.54, 0.1)
+            -- mpart.sprite.flipX = true
+            mpart.sprite:setZIndex(5)
         elseif partName == "Torso" then
-            mpart.sprite:setZIndex(3)
+            mpart.sprite:setZIndex(123)
             -- mpart.sprite:moveTo(mpart.center.x, mpart.center.y)
             --    mpart.sprite:setCenter(0.5, 0.5)
             --    mpart.sprite:add()
         elseif mirrorPartName == "ArmsR" then
             mpart.sprite:setCenter(0.5, 0.5)
-            mpart.sprite:setZIndex(5)
+            mpart.sprite:setZIndex(6)
+
         elseif mirrorPartName == "ArmsL" then
-            mpart.sprite:setZIndex(23)
+            mpart.sprite:setZIndex(7)
             -- mpart.sprite:setCenter(0.5, 0.5)
         else
             mpart.sprite:setCenter(0.5, 0.5) -- Default center for other parts
+            mpart.sprite:setZIndex(23)
         end
         --  mpart.sprite:setScale(-1, 1)
         -- mpart.sprite:moveTo(0, 0)  -- Initial position, adjust as necessary
         mpart.sprite:moveTo(mpart.center.x, mpart.center.y)
-        mpart.sprite:setZIndex(1)
+     
         mpart.sprite:setClipRect(200, 0, 200, 240)
         mpart.sprite:add()
     end
@@ -191,6 +198,8 @@ function Character.new()
     self.currentPart = self.parts.Head
     -- Define clipping bounds for the character
     self.clipRect = { x = 0, y = 0, width = 200, height = 240 }
+    mheadsprite:setZIndex(101)
+    headsprite:setZIndex(102)
     mheadsprite:playAnimation()
     headsprite:playAnimation()
     return self
