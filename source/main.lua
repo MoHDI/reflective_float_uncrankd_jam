@@ -1,21 +1,32 @@
 import "CoreLibs/graphics"
 import "CoreLibs/object"
-
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "CoreLibs/crank"
+
 import 'Character'
 
 -- Load the Character class
 -- import "dvd" -- DEMO
 -- local dvd = dvd(1, -1) -- DEMO
 local pd <const> = playdate
-local gfx <const> = pd.graphics 
+local gfx <const> = pd.graphics
+local snd <const> = pd.sound 
+
 local lastCrankPosition = playdate.getCrankPosition()  -- Initialize with the current crank position
+local lastDCrankPosition = playdate.getCrankPosition()  -- Initialize with the current crank position
 -- local Character = require 'Character'
 local screenWidth, screenHeight = playdate.display.getSize()
 local offscreenImage = gfx.image.new(screenWidth, screenHeight)
+
+
+
+
+-- Load the sound file
+local clickSound = snd.sample.new("sfx/click.wav")
+assert(clickSound, "Failed to load sound file.")
+
 if not offscreenImage then
     error("Failed to create offscreen image")
 end
@@ -34,14 +45,36 @@ myCharacter:selectPart("Torso")
 -- mirrorCharacter:rotatePart(-10)
 -- mirrorCharacter:resetPart()
 imagetable = gfx.imagetable.new('images/sheets/ui-sheet')
+titleTable = gfx.imagetable.new('images/sheets/title')
 
 local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
 local bg = gfx.image.new('images/bg2.png')
 local ui = gfx.image.new('images/ui.png')
+local titleScreen = gfx.image.new('images/titlescreen.png')
+
+
 local bgSprite = gfx.sprite.new(bg)
+local titleSprite = gfx.sprite.new(titleScreen)
+
+local titleActive = true
+local subTitleActive = true
+
+local titleAniSprite = AnimatedSprite.new(titleTable)
+titleAniSprite:moveTo(screenWidth / 2, screenHeight / 2)
+titleAniSprite:addState('idle', 17, 17, { tickStep = 11 })
+titleAniSprite:addState('idlestory', 19, 19, { tickStep = 11 })
+
+titleAniSprite:addState("appear", 1, 15, {tickStep = 30}).asDefault()
+titleAniSprite:addState("story", 17, 19, {tickStep = 100, loop=false})
+titleAniSprite:addState("fade", 20, 25, {tickStep = 5, loop=false})--
+
+titleAniSprite:setZIndex(177)
+titleAniSprite:playAnimation()
+titleAniSprite:pauseAnimation()
 -- local uiSprite = gfx.sprite.new(ui)
 local uiSprite = AnimatedSprite.new(imagetable)
 uiSprite:addState('idle', 1, 1, { tickStep = 15 })
+
 uiSprite:changeState('idle')
 -- uiSprite:playAnimation()
 -- Creating an AnimatedSprite instance
@@ -69,21 +102,47 @@ uiSprite:setZIndex(4)
 bgSprite:add()
 uiSprite:playAnimation()
 
+-- titleSprite:moveTo(screenWidth / 2, screenHeight / 2)
+-- titleSprite:setZIndex(222)
+-- titleSprite:add()
+
+
 
 local function loadGame()
 	playdate.display.setRefreshRate(50) -- Sets framerate to 50 fps
 	math.randomseed(playdate.getSecondsSinceEpoch()) -- seed for math.random
 	gfx.setFont(font) -- DEMO
+
+    clickSound:play()
 end
 
 loadGame()
+
+
+
 function pd.update()
-    -- drawToOffscreenImage() -- Update the offscreen image
-    -- gfx.sprite.updateAll() -- Update and draw all sprites
-    -- Get the current position
+
+    if titleActive or subTitleActive then
+        if playdate.buttonJustPressed(pd.kButtonA) then
+            -- titleSprite:remove()
+            if subTitleActive and not titleActive  then
+                titleAniSprite:changeState("fade")
+                titleAniSprite:playAnimation()
+                subTitleActive = false
+            end
+            if titleActive then
+                titleAniSprite:changeState("story")
+                titleAniSprite:playAnimation()
+                titleActive = false
+            end 
+            -- PLAY A CASCADE SOUND
+            -- clickSound:play()
+        end
+        gfx.sprite.update()
+      return
+    end
     local x1, y1 = myCharacter:getPosition()
-    -- local x2, y2 = spriteRight:getPosition()
-    -- print(x1, y1)
+  
     -- Check for D-pad inputs and adjust position
     if playdate.buttonIsPressed(playdate.kButtonUp) then
         myCharacter:movePart(0, -2)
@@ -107,17 +166,21 @@ function pd.update()
 
     -- Rotate the sprite based on crank movement
     local currentAngle = myCharacter:getPartRotation()
-	-- local currentAngle2 = mirrorCharacter:getPartRotation()
-	-- spriteLeft:setRotation(currentAngle + crankChange)
-	-- spriteRight:setRotation(currentAngle2 - crankChange)
+    
+    local crankChange = playdate.getCrankChange()
+
+    local crankPosition = playdate.getCrankPosition()
+    local degreesChanged = math.abs(crankPosition - lastDCrankPosition)
+
+    if degreesChanged >= 10 or degreesChanged <= -10 then
+        clickSound:play()  -- Play sound every 10 degrees
+        lastDCrankPosition = crankPosition -- Update the last position after playing the sound
+    end
+
+    
     myCharacter:rotatePartFree(currentAngle+crankChange)
 
-    -- mirrorCharacter:rotatePartFree(currentAngle2-crankChange)
 	if playdate.buttonJustPressed(pd.kButtonA) then
-		-- spriteLeft:setRotation(0)
-		-- spriteRight:setRotation(0)
-        -- gfx.sprite.update()
-        
 
 	end
 	if playdate.buttonJustPressed(pd.kButtonB) then
