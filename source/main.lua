@@ -48,7 +48,7 @@ imagetable = gfx.imagetable.new('images/sheets/ui-sheet')
 titleTable = gfx.imagetable.new('images/sheets/title')
 
 local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
-local bg = gfx.image.new('images/bg2.png')
+local bg = gfx.image.new('images/bg1.png')
 local ui = gfx.image.new('images/ui.png')
 local titleScreen = gfx.image.new('images/titlescreen.png')
 
@@ -73,7 +73,7 @@ titleAniSprite:playAnimation()
 titleAniSprite:pauseAnimation()
 -- local uiSprite = gfx.sprite.new(ui)
 local uiSprite = AnimatedSprite.new(imagetable)
-uiSprite:addState('idle', 1, 1, { tickStep = 15 })
+uiSprite:addState('idle', 0, 0, { tickStep = 15 })
 
 uiSprite:changeState('idle')
 -- uiSprite:playAnimation()
