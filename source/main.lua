@@ -20,13 +20,13 @@ if not offscreenImage then
     error("Failed to create offscreen image")
 end
 
-local pieces = {"Head", "Torso", "Arms", "Legs"}
+local pieces = {"Head", "Torso", "ArmsL","ArmsR", "Legs"}
 local activeIndex = 1  -- Start with the first item as active
 local myCharacter = Character.new()
 myCharacter:selectPart("Torso")
-myCharacter:movePart(5, 0)
--- myCharacter:rotatePart(10)
-myCharacter:resetPart()
+-- myCharacter:movePart(5, 0)
+-- -- myCharacter:rotatePart(10)
+-- myCharacter:resetPart()
 
 -- local mirrorCharacter = Character.new()
 -- mirrorCharacter:selectPart("Head")
@@ -60,6 +60,7 @@ uiSprite:setZIndex(4)
 bgSprite:add()
 uiSprite:add()
 
+
 local function loadGame()
 	playdate.display.setRefreshRate(50) -- Sets framerate to 50 fps
 	math.randomseed(playdate.getSecondsSinceEpoch()) -- seed for math.random
@@ -76,7 +77,6 @@ function pd.update()
     -- print(x1, y1)
     -- Check for D-pad inputs and adjust position
     if playdate.buttonIsPressed(playdate.kButtonUp) then
-    
         myCharacter:movePart(0, -2)
         -- mirrorCharacter:movePart(0, -2)
     elseif playdate.buttonIsPressed(playdate.kButtonDown) then
@@ -102,11 +102,12 @@ function pd.update()
 	-- spriteLeft:setRotation(currentAngle + crankChange)
 	-- spriteRight:setRotation(currentAngle2 - crankChange)
     myCharacter:rotatePartFree(currentAngle+crankChange)
+
     -- mirrorCharacter:rotatePartFree(currentAngle2-crankChange)
 	if playdate.buttonJustPressed(pd.kButtonA) then
 		-- spriteLeft:setRotation(0)
 		-- spriteRight:setRotation(0)
-        -- gfx.sprite.update()
+        gfx.sprite.update()
 
 	end
 	if playdate.buttonJustPressed(pd.kButtonB) then
@@ -117,7 +118,16 @@ function pd.update()
         end
       
         myCharacter:selectPart(pieces[activeIndex])
+
 	end
+
+
+    if not spritesDrawn then
+        gfx.sprite.update()  -- This will draw all sprites
+     
+        spritesDrawn = true  -- Ensure this block runs only once
+    end
+
     -- Update the display
     -- gfx.setClipRect(0, 0, 200, 240)
     -- -- gfx.sprite.update()

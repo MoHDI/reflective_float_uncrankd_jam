@@ -36,10 +36,10 @@ headsprite = AnimatedSprite.new(imagetable )
 headsprite:addState('idle',1,12,{ tickStep = 10 })
 headsprite:addState('highlighted',13,24,{ tickStep = 10 })
 -- -- Playing the animation
-headsprite:moveTo(200, 120)
+headsprite:moveTo(200, 0)
 headsprite:setZIndex(23)
 headsprite:playAnimation()
-
+headsprite:setClipRect(0, 0, 200, 240)  
 local spriteImage = playdate.graphics.image.new("images/body/head.png")
 local spriteH = playdate.graphics.sprite.new(spriteImage)
 spriteH:moveTo(100, 100) -- Adjust position as necessary
@@ -67,9 +67,11 @@ mheadsprite:addState('highlighted',13,24,{ tickStep = 10 })
 mheadsprite:setScale(-2, 1)
 
 -- -- Playing the animation
-mheadsprite:moveTo(200, 120)
+mheadsprite:moveTo(100, 120)
 mheadsprite:setZIndex(24)
 mheadsprite:playAnimation()
+mheadsprite:setClipRect(200, 0, 200, 240)  -- Set the clipping rectangle for sprite 2
+
 -- local width, height = headsprite:getSize()
 -- local flippedHead = gfx.image.new(width, height)
 
@@ -82,15 +84,18 @@ mheadsprite:playAnimation()
 -- -- mHeadSprite:add()
     -- Initialize character parts with their respective images
     self.parts = {
-        Head = {image = "images/body/head.png", rotateLimit = 45, moveLimit = {x = 10, y = 10}},
-        Torso = {image = "images/body/torso.png", rotateLimit = 30, moveLimit = {x = 5, y = 5}},
-        Arms = {image = "images/body/arm.png", rotateLimit = 90, moveLimit = {x = 15, y = 15}},
-        Legs = {image = "images/body/leg.png", rotateLimit = 60, moveLimit = {x = 10, y = 20}}
+        Head = {image = "images/body/head.png", rotateLimit = 45,center={x=200,y=0}, moveLimit = {x = 10, y = 10}},
+        Torso = {image = "images/body/torso_tall_flipped.png",center={x=200,y=110}, rotateLimit = 30, moveLimit = {x =100, y = 109}},
+        ArmsL = {image = "images/body/arms1.png",center={x=191,y=450},offSet={w=-9,h=-39} , rotateLimit = 90, moveLimit = {x = 115, y = 12}},
+        -- ArmsR = {image = "images/body/arms2.png",center={x=0,y=0},  rotateLimit = 90, moveLimit = {x = 15, y = 12}},
+        Legs = {image = "images/body/leg.png", center={x=0,y=0},offSet={w=-9,h=-39} , rotateLimit = 60, moveLimit = {x = 10, y = 20}}
     }
     self.mirrorparts = {
         -- Head = {image = "images/body/head.png", rotateLimit = 45, moveLimit = {x = 10, y = 10}},
-        Arms = {image = "images/body/arm.png", rotateLimit = 90, moveLimit = {x = 15, y = 15}},
-        Legs = {image = "images/body/leg.png", rotateLimit = 60, moveLimit = {x = 10, y = 20}}
+        Torso = {image = "images/body/torso_tall.png",center={x=200,y=109},  rotateLimit = 30, moveLimit = {x = 5, y = 5}},
+        ArmsL = {image = "images/body/arms2.png",center={x=209,y=450},offSet={w=9,h=39} ,  rotateLimit = 90, moveLimit = {x = 115, y = 12}},
+        -- ArmsR = {image = "images/body/arms2.png",center={x=0,y=0},  rotateLimit = 90, moveLimit = {x = 15, y = 12}},
+        Legs = {image = "images/body/leg.png",center={x=0,y=0},offSet={w=-9,h=-39} ,  rotateLimit = 60, moveLimit = {x = 10, y = 20}}
     }
     -- self.parts.Head:setCenter(0.5, 0.5)  -- Set the center of the sprite to the middle
    
@@ -107,27 +112,37 @@ mheadsprite:playAnimation()
         part.sprite = gfx.sprite.new(img)
 
         if partName == "Head" then
-            part.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
+            -- part.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
+            -- part.sprite:setVisible(false)
             headsprite:setCenter(0.5, 0.939)
-            part.sprite:setZIndex(4)
+            mheadsprite:setCenter(0.5, 0.939)
+            part.sprite:add()
+            headsprite:setZIndex(4)
+            -- part.sprite:setZIndex(4)
          elseif partName == "Legs" then
             part.sprite:setZIndex(2)
             part.sprite:setCenter(0.54, 0.1)
-         elseif partName == "Arms" then
+         elseif partName == "ArmsL" then
             part.sprite:setZIndex(5)
-            part.sprite:setCenter(0.92, 0.5)
-        elseif partName == "Torso" then
-            part.sprite:setZIndex(3)
+            -- part.sprite:setCenter(0.5, 0.5)
+        elseif partName == "ArmsR" then
+            part.sprite:setZIndex(5)
             part.sprite:setCenter(0.5, 0.5)
+        elseif partName == "Torso" then
+            -- part.sprite:setCenter(0.5, 0.5)
+            part.sprite:setZIndex(3)
+            part.sprite:moveTo(200,120)
+            -- part.sprite:add()
             else
 
                 
             part.sprite:setCenter(0.5, 0.5)  -- Default center for other parts
          end
 
-        part.sprite:moveTo(200, 120)  -- Initial position, adjust as necessary
+        part.sprite:moveTo(part.center.x,part.center.y)  -- Initial position, adjust as necessary
         -- part.sprite:setZIndex(1)
-        -- part.sprite:add()
+        part.sprite:setClipRect(0, 0, 200, 240)  
+        part.sprite:add()
     end
     for mirrorPartName, mpart in pairs(self.mirrorparts) do
         local img = gfx.image.new(mpart.image)
@@ -141,18 +156,29 @@ mheadsprite:playAnimation()
        mpart.sprite = gfx.sprite.new(img)
 
         if mirrorPartName == "Head" then
-           mpart.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
+        --    mpart.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
          elseif mirrorPartName == "Legs" then
-            mpart.sprite:setCenter(0.54, 0.1)
-         elseif mirrorPartName == "Arms" then
-            mpart.sprite:setCenter(0.92, 0.5)
+            -- mpart.sprite:setCenter(0.54, 0.1)
+            -- mpart.sprite.flipX = true
+        elseif partName == "Torso" then
+            mpart.sprite:setZIndex(3)
+            -- mpart.sprite:moveTo(mpart.center.x, mpart.center.y)
+        --    mpart.sprite:setCenter(0.5, 0.5)
+        --    mpart.sprite:add()
+        elseif mirrorPartName == "ArmsR" then
+            mpart.sprite:setCenter(0.5, 0.5)
+           
+         elseif mirrorPartName == "ArmsL" then
+            -- mpart.sprite:setCenter(0.5, 0.5)
             else
                 
             mpart.sprite:setCenter(0.5, 0.5)  -- Default center for other parts
          end
         --  mpart.sprite:setScale(-1, 1)
-        mpart.sprite:moveTo(220, 120)  -- Initial position, adjust as necessary
+        -- mpart.sprite:moveTo(0, 0)  -- Initial position, adjust as necessary
+        mpart.sprite:moveTo(mpart.center.x, mpart.center.y)
         mpart.sprite:setZIndex(1)
+        mpart.sprite:setClipRect(200, 0, 200, 240)  
         mpart.sprite:add()
     end
     -- Default to first part selected
@@ -180,18 +206,29 @@ function Character:movePart(x, y)
     local torso = self.parts.Torso
     -- print(current)
     local newAngle =  torso.sprite:getRotation()
-current.sprite:moveTo(
-    math.max(math.min(current.sprite.x + x, current.sprite.x + current.moveLimit.x), current.sprite.x - current.moveLimit.x),
+    current.sprite:moveTo(current.sprite.x + x, current.sprite.y + y )
+-- current.sprite:moveTo(
+--     math.max(math.min(current.sprite.x + x, current.sprite.x + current.moveLimit.x), current.sprite.x - current.moveLimit.x),
+--     math.max(math.min(current.sprite.y + y, current.sprite.y + current.moveLimit.y), current.sprite.y - current.moveLimit.y)
+-- )
+self.mirrorparts.Torso.sprite:moveTo(
+    math.max(math.min(current.sprite.x - x, current.sprite.x + current.moveLimit.x), current.sprite.x - current.moveLimit.x),
     math.max(math.min(current.sprite.y + y, current.sprite.y + current.moveLimit.y), current.sprite.y - current.moveLimit.y)
 )
-
-    headsprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-20, torso.sprite.x, torso.sprite.y, newAngle))
-    self.parts.Head.sprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-20, torso.sprite.x, torso.sprite.y, newAngle))
-    self.parts.Arms.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
+    -- headsprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-199, torso.sprite.x, torso.sprite.y, newAngle))
+    -- mheadsprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-70, torso.sprite.x, torso.sprite.y, newAngle))
+   
+    self.parts.Head.sprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y-70, torso.sprite.x, torso.sprite.y, newAngle))
+    self.parts.ArmsL.sprite:moveTo(getRotatedPosition(torso.sprite.x+self.parts.ArmsL.offSet.w, torso.sprite.y+self.parts.ArmsL.offSet.h, torso.sprite.x, torso.sprite.y, newAngle))
+    -- self.parts.ArmsL.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
+    -- self.parts.ArmsR.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
     self.parts.Legs.sprite:moveTo(getRotatedPosition(torso.sprite.x-15, torso.sprite.y+20, torso.sprite.x, torso.sprite.y, newAngle))
-
-   self.mirrorparts.Arms.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
-    self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y+20, torso.sprite.x, torso.sprite.y, newAngle))
+    
+    --    self.mirrorparts.Torso.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
+    self.mirrorparts.ArmsL.sprite:moveTo(getRotatedPosition(torso.sprite.x+self.mirrorparts.ArmsL.offSet.w, torso.sprite.y+self.mirrorparts.ArmsL.offSet.h, torso.sprite.x, torso.sprite.y, -newAngle))
+--    self.mirrorparts.ArmsL.sprite:moveTo(getRotatedPosition(torso.sprite.x + self.mirrorparts.ArmsL.offset.w, torso.sprite.y+self.mirrorparts.ArmsL.offset.h, torso.sprite.x, torso.sprite.y, newAngle))
+--    self.mirrorparts.ArmsR.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y-10, torso.sprite.x, torso.sprite.y, newAngle))
+    self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(torso.sprite.x+15, torso.sprite.y+20, torso.sprite.x, torso.sprite.y, -newAngle))
     torso.sprite:setRotation(newAngle) 
 
 end
@@ -203,27 +240,42 @@ function Character:rotatePartFree(angle)
     if current == self.parts.Torso then 
         -- self.parts.Head.sprite:moveTo(getRotatedPosition(self.parts.Head.sprite.x, self.parts.Head.sprite.y, current.sprite.x, current.sprite.y, newAngle))
         -- self.parts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
-        headsprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
-  
-        self.parts.Arms.sprite:moveTo(getRotatedPosition(current.sprite.x-15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
+        headsprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-40, current.sprite.x, current.sprite.y, newAngle))
+        mheadsprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-40, current.sprite.x, current.sprite.y, -newAngle))
+        self.parts.ArmsL.sprite:moveTo(getRotatedPosition(current.sprite.x+self.parts.ArmsL.offSet.w, current.sprite.y+self.parts.ArmsL.offSet.h, current.sprite.x, current.sprite.y, newAngle))
+        -- self.parts.ArmsR.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
         self.parts.Legs.sprite:moveTo(getRotatedPosition(current.sprite.x-15, current.sprite.y+20, current.sprite.x, current.sprite.y, newAngle))
 
         -- self.mirrorparts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
-        self.mirrorparts.Arms.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
+        self.mirrorparts.ArmsL.sprite:moveTo(getRotatedPosition(current.sprite.x-15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
+        -- self.mirrorparts.ArmsR.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
         self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y+20, current.sprite.x, current.sprite.y, newAngle))
         headsprite:changeState('idle')
+        mheadsprite:changeState('idle')
+        self.mirrorparts.Torso.sprite:setRotation(-newAngle)
     end
 
     if(current == self.parts.Head) then
         headsprite:changeState('highlighted')
+        mheadsprite:changeState('highlighted')
+        
         --  headsprite:forceNextAnimation(true, 'idle') -- Used to change state to the next animation (from current state's nextAnimation param) or to the specified state now or in the end of the current animation loop.
         headsprite:setRotation(newAngle)
+        mheadsprite:setRotation(-newAngle)
+
         -- self.mirrorparts.Head.sprite:setRotation(-newAngle)
     end
-    if(current == self.parts.Arms) then
+    if(current == self.parts.ArmsL ) then
 
-        self.mirrorparts.Arms.sprite:setRotation(-newAngle)
+        self.mirrorparts.ArmsL.sprite:setRotation(-newAngle)
+        -- self.mirrorparts.ArmsR.sprite:setRotation(-newAngle)
     end
+    if(current == self.parts.ArmsR ) then
+
+        -- self.mirrorparts.ArmsL.sprite:setRotation(-newAngle)
+        -- self.mirrorparts.ArmsR.sprite:setRotation(-newAngle)
+    end
+
     if(current == self.parts.Legs) then
         self.mirrorparts.Legs.sprite:setRotation(-newAngle)
     end
@@ -244,8 +296,14 @@ end
 function Character:resetPart()
     local current = self.currentPart
     current.sprite:setRotation(0)
-    current.sprite:moveTo(200, 120)  -- Reset to some default position, modify as needed
+    -- current.sprite:moveTo(200, 120)  -- Reset to some default position, modify as needed
 end
 function Character:update()
-    gfx.sprite.update()
+--    headsprite:update()
+-- --    mheadsprite:update()
+--    self.parts.Head.sprite:update() 
+--    self.parts.Arms.sprite:update()
+--    self.parts.Legs.sprite:update()
+
+
 end
