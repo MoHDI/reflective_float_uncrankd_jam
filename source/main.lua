@@ -20,7 +20,7 @@ if not offscreenImage then
     error("Failed to create offscreen image")
 end
 
-local pieces = {"Head", "Torso", "ArmsL","ArmsR", "Legs"}
+local pieces = {"Head", "Torso", "ArmsL","ArmsR", "LegsL", "LegsR"}
 local activeIndex = 1  -- Start with the first item as active
 local myCharacter = Character.new()
 myCharacter:selectPart("Torso")
