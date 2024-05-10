@@ -243,70 +243,47 @@ end
 function Character:movePart(x, y)
    
     local torso = self.parts.Torso
+    local mTorso = self.mirrorparts.Torso
     local newAngle = torso.sprite:getRotation()
-
+    headsprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y - 40, torso.sprite.x, torso.sprite.y,
+            newAngle))
+        mheadsprite:moveTo(getRotatedPosition(self.mirrorparts.Torso.sprite.x, self.mirrorparts.Torso.sprite.y - 40, self.mirrorparts.Torso.sprite.x, mTorso.sprite
+        .y, -newAngle))
     torso.sprite:moveTo(torso.sprite.x + x, torso.sprite.y + y)
     self.mirrorparts.Torso.sprite:moveTo(self.mirrorparts.Torso.sprite.x - x, torso.sprite.y + y)
     self.parts.Head.sprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y, torso.sprite.x, torso.sprite.y,
         newAngle))
 
+        self.parts.ArmsL.sprite:moveTo(getRotatedPosition(torso.sprite.x + self.parts.ArmsL.offSet.w,
+        torso.sprite.y + self.parts.ArmsL.offSet.h, torso.sprite.x, torso.sprite.y, newAngle))
+
+        self.parts.ArmsR.sprite:moveTo(getRotatedPosition(torso.sprite.x + self.parts.ArmsR.offSet.w,
+        torso.sprite.y + self.parts.ArmsR.offSet.h, torso.sprite.x, torso.sprite.y, newAngle))
+
+    self.parts.LegsL.sprite:moveTo(getRotatedPosition(torso.sprite.x +  self.parts.LegsL.offSet.w, torso.sprite.y +  self.parts.LegsL.offSet.h, torso.sprite.x,
+        torso.sprite.y, newAngle))
+
+        self.parts.LegsR.sprite:moveTo(getRotatedPosition(torso.sprite.x +  self.parts.LegsR.offSet.w, torso.sprite.y +  self.parts.LegsR.offSet.h, torso.sprite.x,
+        torso.sprite.y, newAngle))
+
+        self.mirrorparts.ArmsL.sprite:moveTo(getRotatedPosition(mTorso.sprite.x + self.mirrorparts.ArmsL.offSet.w,
+            torso.sprite.y + self.mirrorparts.ArmsL.offSet.h, mTorso.sprite.x, torso.sprite.y, -newAngle))
+            self.mirrorparts.ArmsR.sprite:moveTo(getRotatedPosition(mTorso.sprite.x + self.mirrorparts.ArmsR.offSet.w,
+            torso.sprite.y + self.mirrorparts.ArmsR.offSet.h, mTorso.sprite.x, torso.sprite.y, -newAngle))
+
+            self.mirrorparts.LegsL.sprite:moveTo(getRotatedPosition(mTorso.sprite.x +  self.mirrorparts.LegsL.offSet.w, mTorso.sprite.y +  self.mirrorparts.LegsL.offSet.h, mTorso.sprite.x,
+            torso.sprite.y, -newAngle))      
+
+            self.mirrorparts.LegsR.sprite:moveTo(getRotatedPosition(mTorso.sprite.x +  self.mirrorparts.LegsR.offSet.w, mTorso.sprite.y +  self.mirrorparts.LegsR.offSet.h, mTorso.sprite.x,
+            torso.sprite.y, -newAngle))    
+
+
+
     torso.sprite:setRotation(newAngle)
     
 end
 
-function Character:rotatePartFreeold(angle)
-    local current = self.currentPart
-    local torso = self.parts.Torso
-    local newAngle = angle
-    if current == self.parts.Torso then
-        -- self.parts.Head.sprite:moveTo(getRotatedPosition(self.parts.Head.sprite.x, self.parts.Head.sprite.y, current.sprite.x, current.sprite.y, newAngle))
-        -- self.parts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
-        headsprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y - 40, current.sprite.x, current.sprite.y,
-            newAngle))
-        mheadsprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y - 40, current.sprite.x, current.sprite
-        .y, -newAngle))
-        self.parts.ArmsL.sprite:moveTo(getRotatedPosition(current.sprite.x + self.parts.ArmsL.offSet.w,
-            current.sprite.y + self.parts.ArmsL.offSet.h, current.sprite.x, current.sprite.y, newAngle))
-        -- self.parts.ArmsR.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
-        self.parts.Legs.sprite:moveTo(getRotatedPosition(current.sprite.x - 15, current.sprite.y + 20, current.sprite.x,
-            current.sprite.y, newAngle))
 
-        -- self.mirrorparts.Head.sprite:moveTo(getRotatedPosition(current.sprite.x, current.sprite.y-20, current.sprite.x, current.sprite.y, newAngle))
-        self.mirrorparts.ArmsL.sprite:moveTo(getRotatedPosition(current.sprite.x - 15, current.sprite.y - 10,
-            current.sprite.x, current.sprite.y, newAngle))
-        -- self.mirrorparts.ArmsR.sprite:moveTo(getRotatedPosition(current.sprite.x+15, current.sprite.y-10, current.sprite.x, current.sprite.y, newAngle))
-        self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(current.sprite.x + 15, current.sprite.y + 20,
-            current.sprite.x, current.sprite.y, newAngle))
-        headsprite:changeState('idle')
-        mheadsprite:changeState('idle')
-        self.mirrorparts.Torso.sprite:setRotation(-newAngle)
-    end
-
-    if (current == self.parts.Head) then
-        headsprite:changeState('highlighted')
-        mheadsprite:changeState('highlighted')
-
-        --  headsprite:forceNextAnimation(true, 'idle') -- Used to change state to the next animation (from current state's nextAnimation param) or to the specified state now or in the end of the current animation loop.
-        headsprite:setRotation(newAngle)
-        mheadsprite:setRotation(-newAngle)
-
-        -- self.mirrorparts.Head.sprite:setRotation(-newAngle)
-    end
-    if (current == self.parts.ArmsL) then
-        self.mirrorparts.ArmsL.sprite:setRotation(-newAngle)
-        -- self.mirrorparts.ArmsR.sprite:setRotation(-newAngle)
-    end
-    if (current == self.parts.ArmsR) then
-        -- self.mirrorparts.ArmsL.sprite:setRotation(-newAngle)
-        -- self.mirrorparts.ArmsR.sprite:setRotation(-newAngle)
-    end
-
-    if (current == self.parts.Legs) then
-        self.mirrorparts.Legs.sprite:setRotation(-newAngle)
-    end
-
-    current.sprite:setRotation(newAngle)
-end
 
 function Character:rotatePartFree(angle)
     local current = self.currentPart

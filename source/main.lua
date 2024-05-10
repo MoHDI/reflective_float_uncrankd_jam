@@ -116,34 +116,10 @@ function pd.update()
         if activeIndex > #pieces then
             activeIndex = 1
         end
-      
         myCharacter:selectPart(pieces[activeIndex])
 
 	end
-
-
-    if not spritesDrawn then
-        gfx.sprite.update()  -- This will draw all sprites
-     
-        spritesDrawn = true  -- Ensure this block runs only once
-    end
-
-    -- Update the display
-    -- gfx.setClipRect(0, 0, 200, 240)
-    -- -- gfx.sprite.update()
-    -- myCharacter:update()
-    -- -- Clear the clipping rectangle so it doesn't affect other drawing operations
-    -- gfx.clearClipRect()
-    
-    -- gfx.setClipRect(200, 0, 200, 240)
+ 
     gfx.sprite.update()
-    -- Clear the clipping rectangle so it doesn't affect other drawing operations
-    -- gfx.clearClipRect()
-    -- bgSprite:add()
-    -- Update all sprites
-    -- playdate.graphics.sprite.update()
-    -- myCharacter:update()
 
-    -- playdate.timer.updateTimers()
-	
 end
