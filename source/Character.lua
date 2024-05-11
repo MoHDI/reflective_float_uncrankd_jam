@@ -4,7 +4,7 @@ import "CoreLibs/ui"
 import "AnimatedSprite"
 
 local gfx <const> = playdate.graphics
-
+local snd <const> = playdate.sound
 -- Character class definition
 Character = {}
 Character.__index = Character
@@ -25,16 +25,62 @@ end
 
 
 function Character.new()
+
     local self = setmetatable({}, Character)
     -- Loading imagetable from the disk
-    imagetable = gfx.imagetable.new('images/sheets/head')
-    imagetableFlip = gfx.imagetable.new('images/sheets/head-flipped')
+    -- imagetable = gfx.imagetable.new('images/sheets/head')
+    -- imagetableFlip = gfx.imagetable.new('images/sheets/head-flipped')
+    toggleOutfit=true
+    imagetable = gfx.imagetable.new('images/sheets/bighead')
+    imagetableFlip = gfx.imagetable.new('images/sheets/bighead-flipped')
+    changeSound = snd.sample.new("sfx/woosh.wav")
+    assert(changeSound, "Failed to load sound file.")
+    local function addStates(sprite)
+        sprite:addState('idle', 1, 12, { tickStep = 10 })
+        sprite:addState('eyepatch', 14, 14)
+        sprite:addState('hair', 15, 15)
+        sprite:addState('bald', 16, 16)
+        sprite:addState('hawk', 17, 17)
+        sprite:addState('sunglasses', 18, 18)
+        sprite:addState('clown', 19, 19)
+        sprite:addState('bunny', 20, 20)
+        sprite:addState('baby', 21, 21)
+        sprite:addState('piggy', 22, 22)
+        sprite:addState('spiral', 23, 23)
+        sprite:addState('bear', 24, 24)
+        sprite:addState('skull', 25, 25)
+        sprite:addState('highlighted', 13, 13)
 
-    -- Creating an AnimatedSprite instance
-    headsprite = AnimatedSprite.new(imagetable)
-    -- Adding custom a animation state (Optional)
-    headsprite:addState('idle', 1, 12, { tickStep = 10 })
-    headsprite:addState('highlighted', 13, 24, { tickStep = 10 })
+        -- sprite:setDefaultState("idle") 
+
+    end
+    
+-- Creating an AnimatedSprite instance
+headsprite = AnimatedSprite.new(imagetable)
+addStates(headsprite)
+
+mheadsprite = AnimatedSprite.new(imagetableFlip)
+addStates(mheadsprite)
+
+    states = headsprite:getLocalStates()
+    stateNames = {}
+    
+    -- print("Second item in states", states[2])
+    
+    for index, state in pairs(states) do
+        
+        -- print("Item " .. index .. " in states: ", state)
+        table.insert(stateNames, index)
+    end
+    -- print("stateNames", stateNames[1])
+    -- print("Headsprite states", headsprite:getLocalStates())
+
+    local randomIndex = math.random(1, #stateNames)
+    local randomState = stateNames[randomIndex]
+    -- print("Random state", randomState)
+    -- headsprite:changeState(randomState)
+    -- mheadsprite:changeState(randomState)
+
     -- -- Playing the animation
     headsprite:moveTo(200, 0)
     headsprite:setZIndex(43)
@@ -60,10 +106,7 @@ function Character.new()
     -- spriteH:setMaskImage(maskImage)
 
 
-    mheadsprite = AnimatedSprite.new(imagetableFlip)
-    -- Adding custom a animation state (Optional)
-    mheadsprite:addState('idle', 1, 12, { tickStep = 10 })
-    mheadsprite:addState('highlighted', 13, 24, { tickStep = 10 })
+   
     mheadsprite:setScale(-2, 1)
 
     -- -- Playing the animation
@@ -116,8 +159,8 @@ function Character.new()
         if partName == "Head" then
             -- part.sprite:setCenter(0.5, 0.939)  -- Specific center for the head
             -- part.sprite:setVisible(false)
-            headsprite:setCenter(0.5, 0.939)
-            mheadsprite:setCenter(0.5, 0.939)
+            headsprite:setCenter(0.5, 90/120)
+            mheadsprite:setCenter(0.5, 90/120)
             part.sprite:add()
             headsprite:setZIndex(4)
             -- part.sprite:setZIndex(4)
@@ -209,9 +252,9 @@ end
 function Character:selectPart(partName)
     if self.parts[partName] then
         self.currentPart = self.parts[partName]
-        print("Selected part: " .. partName)
+        -- print("Selected part: " .. partName)
     else
-        print("Part not found: " .. partName)
+        -- print("Part not found: " .. partName)
     end
 end
 
@@ -256,10 +299,10 @@ function Character:movePart(x, y)
     local newAngle = torso.sprite:getRotation()
     headsprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y - 40, torso.sprite.x, torso.sprite.y,
             newAngle))
-        mheadsprite:moveTo(getRotatedPosition(self.mirrorparts.Torso.sprite.x, self.mirrorparts.Torso.sprite.y - 40, self.mirrorparts.Torso.sprite.x, mTorso.sprite
+        mheadsprite:moveTo(getRotatedPosition(mTorso.sprite.x, mTorso.sprite.y - 40, mTorso.sprite.x, mTorso.sprite
         .y, -newAngle))
     torso.sprite:moveTo(torso.sprite.x + x, torso.sprite.y + y)
-    self.mirrorparts.Torso.sprite:moveTo(self.mirrorparts.Torso.sprite.x - x, torso.sprite.y + y)
+    mTorso.sprite:moveTo(mTorso.sprite.x - x, torso.sprite.y + y)
     self.parts.Head.sprite:moveTo(getRotatedPosition(torso.sprite.x, torso.sprite.y, torso.sprite.x, torso.sprite.y,
         newAngle))
 
@@ -330,13 +373,13 @@ function Character:rotatePartFree(angle)
         -- self.mirrorparts.ArmsL.sprite:moveTo(getRotatedPosition(mTorso.sprite.x - self.mirrorparts.ArmsL.offset.w, current.sprite.y -self.mirrorparts.ArmsL.offset.h, mTorso.sprite.x, current.sprite.y, newAngle))
         -- self.mirrorparts.Legs.sprite:moveTo(getRotatedPosition(mTorso.sprite.x + self.mirrorparts.Legs.offset.h, current.sprite.y + 20,
         -- mTorso.sprite.x, current.sprite.y, newAngle))
-        headsprite:changeState('idle')
-        mheadsprite:changeState('idle')
+        -- headsprite:changeState('idle')
+        -- mheadsprite:changeState('idle')
         self.mirrorparts.Torso.sprite:setRotation(-newAngle)
     end
     if (current == self.parts.Head) then
-        headsprite:changeState('highlighted')
-        mheadsprite:changeState('highlighted')
+        -- headsprite:changeState('highlighted')
+        -- mheadsprite:changeState('highlighted')
         headsprite:setRotation(newAngle)
         mheadsprite:setRotation(-newAngle)
     end
@@ -360,7 +403,10 @@ function Character:getPartRotation()
     local current = self.currentPart
     return current.sprite:getRotation()
 end
-
+function Character:getTorsoPosition()
+    -- local current = self.parts.Torso.sprite:getPosition()
+    return self.parts.Torso.sprite:getPosition()
+end
 function Character:getPosition()
     local current = self.currentPart
     return current.sprite:getPosition()
@@ -374,6 +420,39 @@ function Character:resetPart()
 end
 
 function Character:update()
+       if self.parts.Torso then 
+    
+        -- WTF HUH? WHY IS that only returning one number shouldnt it be 2 
+        local x = self.parts.Torso.sprite:getPosition()
+      
+        -- END WTF HUH UGH
+
+         if self.parts.Torso.sprite:getPosition() >= 250 and toggleOutfit then
+
+            toggleOutfit = false 
+
+            local randomIndex = math.random(1, #stateNames)
+
+            local randomState = stateNames[randomIndex]
+            -- local randomState = "eyepatch"
+            -- print("Random state", randomState)
+            -- print("first state ", stateNames[1])
+            repeat
+                randomIndex = math.random(1, #stateNames)
+                randomState = stateNames[randomIndex]
+            until randomState ~= "default"
+            changeSound:play()
+            headsprite:changeState(randomState)
+            mheadsprite:changeState(randomState)
+
+         elseif self.parts.Torso.sprite:getPosition() < 250 and not toggleOutfit then
+            toggleOutfit = true
+         end
+
+    end 
+            -- self.parts.Torso.sprite:getPosition()
+       
+    --    headsprite:moveTo(200, 0)
     --    headsprite:update()
     -- --    mheadsprite:update()
     --    self.parts.Head.sprite:update()

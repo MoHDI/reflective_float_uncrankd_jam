@@ -4,3 +4,4 @@ description=Pappyshow -Socially Impressive!
 bundleID=com.mohdi.reflective_float
 version=0.0.1
 buildNumber=1
+imagePath=images/cards
