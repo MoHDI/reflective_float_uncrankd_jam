@@ -360,7 +360,10 @@ function Character:getPartRotation()
     local current = self.currentPart
     return current.sprite:getRotation()
 end
-
+function Character:getTorsoPosition()
+    -- local current = self.parts.Torso.sprite:getPosition()
+    return self.parts.Torso.sprite:getPosition()
+end
 function Character:getPosition()
     local current = self.currentPart
     return current.sprite:getPosition()

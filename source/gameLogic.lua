@@ -40,5 +40,8 @@ end
 function GameLogic.restartGame()
     GameLogic.initialize()  -- Re-initialize the game logic
 end
+function GameLogic.getScore()
+    return GameLogic.score
+end 
 
 return GameLogic
