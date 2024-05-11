@@ -65,19 +65,19 @@ addStates(mheadsprite)
     states = headsprite:getLocalStates()
     stateNames = {}
     
-    print("Second item in states", states[2])
+    -- print("Second item in states", states[2])
     
     for index, state in pairs(states) do
         
-        print("Item " .. index .. " in states: ", state)
+        -- print("Item " .. index .. " in states: ", state)
         table.insert(stateNames, index)
     end
-    print("stateNames", stateNames[1])
+    -- print("stateNames", stateNames[1])
     -- print("Headsprite states", headsprite:getLocalStates())
 
     local randomIndex = math.random(1, #stateNames)
     local randomState = stateNames[randomIndex]
-    print("Random state", randomState)
+    -- print("Random state", randomState)
     -- headsprite:changeState(randomState)
     -- mheadsprite:changeState(randomState)
 
@@ -252,9 +252,9 @@ end
 function Character:selectPart(partName)
     if self.parts[partName] then
         self.currentPart = self.parts[partName]
-        print("Selected part: " .. partName)
+        -- print("Selected part: " .. partName)
     else
-        print("Part not found: " .. partName)
+        -- print("Part not found: " .. partName)
     end
 end
 
@@ -435,8 +435,8 @@ function Character:update()
 
             local randomState = stateNames[randomIndex]
             -- local randomState = "eyepatch"
-            print("Random state", randomState)
-            print("first state ", stateNames[1])
+            -- print("Random state", randomState)
+            -- print("first state ", stateNames[1])
             repeat
                 randomIndex = math.random(1, #stateNames)
                 randomState = stateNames[randomIndex]

@@ -31,16 +31,19 @@ fonts = {
 
 }
 
-
+-- local gameMusic = snd.newAudioClip("sfx/pappyshow_song.wav")
+local gameMusic = snd.fileplayer.new("sfx/pappyshow_song2.mp3")
+assert(gameMusic, "Failed to load sound file.")
 -- Load the sound file
 local clickSound = snd.sample.new("sfx/click.wav")
+
 assert(clickSound, "Failed to load sound file.")
 
 if not offscreenImage then
     error("Failed to create offscreen image")
 end
 
-local pieces = { "Head", "Torso", "ArmsL", "ArmsR", "LegsL", "LegsR" }
+local pieces = { "Torso","Head", "ArmsL", "ArmsR", "LegsL", "LegsR" }
 local activeIndex = 1 -- Start with the first item as active
 local myCharacter = Character.new()
 myCharacter:selectPart("Torso")
@@ -56,6 +59,10 @@ myCharacter:selectPart("Torso")
 imagetable = gfx.imagetable.new('images/sheets/ui-sheet')
 titleTable = gfx.imagetable.new('images/sheets/title')
 livetale = gfx.imagetable.new('images/sheets/live')
+flowerstable = gfx.imagetable.new('images/sheets/flowers')
+
+lovetable = gfx.imagetable.new('images/sheets/love')
+hatetable = gfx.imagetable.new('images/sheets/hate')
 
 
 local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
@@ -71,8 +78,11 @@ local titleSprite = gfx.sprite.new(titleScreen)
 
 local titleActive = true
 local subTitleActive = true
-local viewerCount = 3
+local viewerCount = 0
 local tempNum = 0
+
+
+
 local titleAniSprite = AnimatedSprite.new(titleTable)
 titleAniSprite:moveTo(screenWidth / 2, screenHeight / 2)
 titleAniSprite:addState('idle', 17, 17, { tickStep = 11 })
@@ -100,9 +110,33 @@ function setupUI()
     local liveUiSprite = AnimatedSprite.new(livetale)
     liveUiSprite:addState('idle', 1, 2, { tickStep = 40 })
     liveUiSprite:changeState('idle')
-    liveUiSprite:moveTo(22 + 10, 10 + 10)
+    liveUiSprite:moveTo(22 + 1, 10 + 1)
     liveUiSprite:playAnimation()
     liveUiSprite:setZIndex(176)
+    
+    flowersUiSprite = AnimatedSprite.new(flowerstable)
+    flowersUiSprite:addState('idle', 1, 1)
+    flowersUiSprite:addState('support', 1, 18, { tickStep =10 })
+    flowersUiSprite:changeState('idle')
+    flowersUiSprite:moveTo(38+1, 240-16)
+    flowersUiSprite:setZIndex(174)
+    -- 61-42
+    loveUiSprite = AnimatedSprite.new(lovetable)
+    loveUiSprite:addState('idle', 1, 1).asDefault( )
+    loveUiSprite:addState('show', nil,nil, { tickStep =5 ,nextAnimation = 'idle'})
+    loveUiSprite:changeState('idle')
+    loveUiSprite:moveTo(400-32, 240-22)
+    loveUiSprite:setZIndex(173)
+
+    hateUiSprite = AnimatedSprite.new(hatetable)
+    hateUiSprite:addState('idle', 1, 1, { tickStep = 10 },true).asDefault( )
+    hateUiSprite:addState('show', nil, nil , { tickStep =5 ,nextAnimation = 'idle'})
+    hateUiSprite:changeState('idle')
+    hateUiSprite:moveTo(400-32, 240-22)
+    hateUiSprite:setZIndex(172)
+    -- hateUiSprite:playAnimation()
+
+   
 end
 function drawInfo()
     gfx.setFont(fonts.rains)
@@ -110,7 +144,7 @@ function drawInfo()
 
 end
 function drawViewers()
-    viewersImg:draw(314, 13)
+    viewersImg:draw(400-75,1)
     -- DREWLS NOTES
     -- DRAWING STUFF STILL CONFUSES ME WITH LUA
     -- YOU'D THINK CHANGING THE FONT COLOR WOULD BE SIMPLE BUT NOPE.
@@ -126,6 +160,20 @@ function drawViewers()
     -- playdate.graphics.kDrawModeXOR
     -- gfx.setColor(gfx.kColorWhite)
     -- gfx.fontColor(gfx.kColorWhite)
+    if tempNum == 125 then 
+        local loveFlip = math.random(200)
+        if viewerCount >=5 then
+            if loveFlip>135 then
+                loveUiSprite:changeState('show')
+                -- loveUiSprite:playAnimation()
+            elseif loveFlip>100 and loveFlip<135 then
+                hateUiSprite:changeState('show')
+                -- hateUiSprite:playAnimation()
+            else
+            end
+        end
+    
+    end 
     if tempNum >= 250 then
         -- All your movement will pay off with these random viewers!
         -- at some point maybe this will be based on your cool moves and requests from viewers
@@ -133,10 +181,34 @@ function drawViewers()
         --  I asked ai how to make a random number in lua for playdate, it gave me several confident but wrong answers
         -- END DREWLS NOTES
 
+
+        -- THIS IS THE ROSES LOGIC LOL 
         tempNum = math.random(-1, 1)
-
-        viewerCount += tempNum
-
+        local viewerFlip = math.random(10)
+        local flowerFlip = math.random(100)
+        if viewerFlip>7 then
+           tempNum=1
+        end
+         viewerCount += tempNum
+       
+         if viewerCount>=2 and flowerFlip>60 then
+             
+             flowersUiSprite:changeState('support')
+             flowersUiSprite:playAnimation()
+         else
+       
+                flowersUiSprite:changeState('idle')
+                flowersUiSprite:playAnimation()
+            end
+    --    if viewerCount>=2 then
+    --        if flowerFlip==1 then 
+    --         flowersUiSprite:changeState('support')
+    --         flowersUiSprite:playAnimation()
+    --        else
+    --         flowersUiSprite:changeState('idle')
+    --         flowersUiSprite:playAnimation()
+    --        end
+        
         if viewerCount < 0 then
             viewerCount = 0
         end
@@ -145,12 +217,22 @@ function drawViewers()
 
     tempNum = tempNum + 1
 
-    gfx.drawTextAligned(tostring(viewerCount), 380, 15, kTextAlignment.right) -- Adjust the position as needed to overlay the image
+    gfx.drawTextAligned(tostring(viewerCount), 400-7, 4, kTextAlignment.right) -- Adjust the position as needed to overlay the image
 
 
     -- gfx.drawText("* to continue", 320, 13)
 end
-
+function toggleMusic()
+    if gameMusic:isPlaying() then
+       gameMusic:pause()
+    else
+       gameMusic:play(0)  -- Play with looping
+    end
+end
+-- Volume range is 0 (silent) to 1 (full volume)
+function setMusicVolume(volume)
+    gameMusic:setVolume(volume)
+end
 function drawToOffscreenImage()
     gfx.pushContext(offscreenImage) -- Set the offscreen image as the current drawing target
     -- Draw your scene here, this could be drawing sprites, shapes, text, etc.
@@ -184,11 +266,71 @@ local function loadGame()
     gfx.setFont(font)                             -- DEMO
     GameLogic.initialize()                        -- Initialize the game logic
     clickSound:play()
+
 end
 
 loadGame()
 
+function createFrameTimer(duration, callback, cSprite)
+    if  cSprite == "nil" then
+        -- print("No sprite provided")
+        timer = {}
+        return
+    end
 
+    local timer = {
+      
+        count = cSprite:getPartRotation(),
+     
+        duration =cSprite:getPartRotation() + duration*2,
+        callback = callback,
+        active = true,
+
+        stop = function(self)
+            self.active = false
+            self.count = 0  -- Optionally reset the count when stopped
+        end,
+        -- Method to get the current count
+        getCount = function(self)
+            return self.count
+        end,
+
+        update = function(self)
+            if not self.active then return end
+            if self.count < self.duration then
+                self.count += 2
+            cSprite:rotatePartFree( self.count )
+            else
+                self.callback()
+                self.active = false -- Optionally stop the timer
+            end
+        end
+    }
+
+    return timer
+end
+-- local myTimer = createFrameTimer(0, function()
+--     print("Timer ended!")
+
+--     -- Any additional actions to perform after the timer ends
+    
+-- end )
+
+function setAutoCrank()
+    crankIdleTime = 100
+    myTimer = createFrameTimer(500, function()
+        -- print("Timer ended!")
+
+        -- Any additional actions to perform after the timer ends
+        
+    end, myCharacter)
+
+    -- local crankPosition = playdate.getCrankPosition()
+    -- local crankChange = crankPosition - lastCrankPosition
+    -- lastCrankPosition = crankPosition -- Update the last position for the next frame
+    -- local increaseAngle = 0 
+    -- myCharacter:rotatePartFree(increaseAngle + crankChange)
+end
 
 function pd.update()
     gfx.clear()
@@ -205,6 +347,8 @@ function pd.update()
                 titleAniSprite:changeState("story")
                 titleAniSprite:playAnimation()
                 setupUI()
+                setMusicVolume(0.4)
+                toggleMusic()
                 titleActive = false
             end
             -- PLAY A CASCADE SOUND
@@ -247,24 +391,31 @@ function pd.update()
         clickSound:play()                  -- Play sound every 10 degrees
         crankIdleTime = 0
         lastDCrankPosition = crankPosition -- Update the last position after playing the sound
+       if myTimer then  myTimer:stop() end
     end
 
     crankIdleTime += 1
     if crankIdleTime >= 400 then
-        viewerCount = 0
+        viewerCount -=1
+        if viewerCount < 0 then
+            viewerCount = 0
+        end
+        crankIdleTime = math.random(100, 300)
         -- clickSound:play()  -- Play sound every 10 degrees
     end
     myCharacter:rotatePartFree(currentAngle + crankChange)
 
     if playdate.buttonJustPressed(pd.kButtonA) then
         -- viewerCount+=1
+        setAutoCrank()
     end
     if playdate.buttonJustPressed(pd.kButtonB) then
         -- changeActivePiece()
         -- viewerCount-=1
-        print("crankIdleTime: " .. crankIdleTime)
+        -- print("crankIdleTime: " .. crankIdleTime)
         if (viewerCount < 0) then
             viewerCount = 0
+            
             -- GameLogic.endGame()
         end
         activeIndex = activeIndex + 1
@@ -276,5 +427,9 @@ function pd.update()
     gfx.sprite.update()
     myCharacter:update()
     drawViewers()
+    if(myTimer) then
+        myTimer:update()
+    end
+   
     -- drawInfo()
 end
