@@ -27,6 +27,7 @@ fonts = {
     mini      = gfx.font.new("font/Mini-Sans-2X"),
     miniLight = gfx.font.new("font/Mini-Sans-Light-2X"),
     circ      = gfx.font.new("font/font-full-circle"),
+    rains      = gfx.font.new("font/font-rains-1x"),
 
 }
 
@@ -104,8 +105,9 @@ function setupUI()
     liveUiSprite:setZIndex(176)
 end
 function drawInfo()
-    gfx.setFont(fonts.mini)
-    gfx.drawText("Score: " .. myCharacter, 100, 10)
+    gfx.setFont(fonts.rains)
+    gfx.drawText("TPOS:" .. myCharacter:getTorsoPosition(), 100, 10)
+
 end
 function drawViewers()
     viewersImg:draw(314, 13)
@@ -272,5 +274,7 @@ function pd.update()
         myCharacter:selectPart(pieces[activeIndex])
     end
     gfx.sprite.update()
+    myCharacter:update()
     drawViewers()
+    -- drawInfo()
 end
